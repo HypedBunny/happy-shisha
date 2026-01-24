@@ -52,7 +52,7 @@ const HeroSection = () => {
           transition={{ duration: 1.2, ease: 'easeOut' }}
         >
           <img
-            src="/src/public/Gemini_Generated_Image_9iijvz9iijvz9iij-removebg-preview.png"
+            src="/logo.png"
             alt="Happy Shisha Logo"
             className="w-64 h-64 md:w-96 md:h-96 object-contain"
           />
