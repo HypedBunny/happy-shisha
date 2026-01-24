@@ -45,13 +45,26 @@ const HeroSection = () => {
         }}
         transition={{ type: 'spring', stiffness: 50, damping: 20 }}
       >
+        <motion.div
+          className="mb-8 flex justify-center"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease: 'easeOut' }}
+        >
+          <img
+            src="/src/public/Gemini_Generated_Image_9iijvz9iijvz9iij-removebg-preview.png"
+            alt="Happy Shisha Logo"
+            className="w-64 h-64 md:w-96 md:h-96 object-contain"
+          />
+        </motion.div>
+
         <motion.h1
           className="text-5xl md:text-7xl lg:text-8xl font-light tracking-wider text-soft-white mb-8"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: 'easeOut' }}
+          transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
         >
-          Premium Mobile Shisha
+          Happy Shisha
         </motion.h1>
 
         <motion.p
@@ -65,25 +78,52 @@ const HeroSection = () => {
 
         <motion.button
           onClick={scrollToContact}
-          className="relative px-12 py-4 text-lg font-medium text-soft-white bg-gradient-to-r from-amber to-amber/80 rounded-full overflow-hidden group"
+          className="relative px-16 py-5 text-xl font-semibold text-charcoal bg-gradient-to-r from-amber via-amber/90 to-amber rounded-full overflow-hidden group shadow-2xl"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.1, y: -5 }}
+          whileTap={{ scale: 0.9 }}
         >
-          <span className="relative z-10">Get Pricing</span>
+          {/* Animated gradient background */}
           <motion.div
-            className="absolute inset-0 bg-amber/50"
+            className="absolute inset-0 bg-gradient-to-r from-amber/80 via-yellow-500 to-amber/80"
+            animate={{
+              x: ['-100%', '100%'],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: 'linear',
+            }}
+          />
+
+          {/* Pulsing glow effect */}
+          <motion.div
+            className="absolute inset-0"
             animate={{
               boxShadow: [
-                '0 0 20px rgba(227, 139, 41, 0.4)',
-                '0 0 40px rgba(227, 139, 41, 0.6)',
-                '0 0 20px rgba(227, 139, 41, 0.4)',
+                '0 0 20px rgba(227, 139, 41, 0.5)',
+                '0 0 40px rgba(227, 139, 41, 0.8)',
+                '0 0 60px rgba(227, 139, 41, 1)',
+                '0 0 40px rgba(227, 139, 41, 0.8)',
+                '0 0 20px rgba(227, 139, 41, 0.5)',
               ],
             }}
             transition={{ duration: 2, repeat: Infinity }}
           />
+
+          {/* Shimmer effect on hover */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-100"
+            initial={{ x: '-100%' }}
+            whileHover={{
+              x: '100%',
+              transition: { duration: 0.6, ease: 'easeInOut' },
+            }}
+          />
+
+          <span className="relative z-10 tracking-wide drop-shadow-lg">BOOK NOW!</span>
         </motion.button>
       </motion.div>
 

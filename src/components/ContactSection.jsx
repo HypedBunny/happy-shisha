@@ -80,7 +80,7 @@ const ContactSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 1 }}
         >
-          Get Your Pricing
+          Book Now!
         </motion.h2>
 
         <motion.p
@@ -207,12 +207,21 @@ const ContactSection = () => {
               {/* Submit Button */}
               <motion.button
                 type="submit"
-                className="w-full mt-8 px-8 py-4 bg-gradient-to-r from-amber to-amber/80 text-soft-white font-medium rounded-lg flex items-center justify-center gap-2 group"
+                className="w-full mt-8 px-8 py-4 bg-gradient-to-r from-amber to-amber/80 text-charcoal font-semibold rounded-lg flex items-center justify-center gap-2 group overflow-hidden relative shadow-xl"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <span>Get My Pricing</span>
-                <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                {/* Shimmer effect */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100"
+                  initial={{ x: '-100%' }}
+                  whileHover={{
+                    x: '100%',
+                    transition: { duration: 0.6, ease: 'easeInOut' },
+                  }}
+                />
+                <span className="relative z-10">BOOK NOW!</span>
+                <Send className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </motion.button>
 
               <p className="text-smoke text-xs text-center mt-6">
