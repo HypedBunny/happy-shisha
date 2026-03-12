@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import Loader from './components/Loader';
-import HeroSection from './components/HeroSection';
-import ExperienceSection from './components/ExperienceSection';
-import VibeSection from './components/VibeSection';
-import TrustSection from './components/TrustSection';
-import BookingFlowSection from './components/BookingFlowSection';
-import ContactSection from './components/ContactSection';
-import SEOContent from './components/SEOContent';
-import WhatsAppButton from './components/WhatsAppButton';
+import Layout from './components/Layout';
+import Home from './pages/Home';
+import Info from './pages/Info';
+import BookNow from './pages/BookNow';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -29,16 +27,16 @@ function App() {
       </AnimatePresence>
 
       {!loading && (
-        <div className="relative w-full overflow-x-hidden bg-charcoal">
-          <HeroSection />
-          <ExperienceSection />
-          <VibeSection />
-          <TrustSection />
-          <BookingFlowSection />
-          <SEOContent />
-          <ContactSection />
-          <WhatsAppButton />
-        </div>
+        <Router>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="info" element={<Info />} />
+              <Route path="book" element={<BookNow />} />
+            </Route>
+          </Routes>
+        </Router>
       )}
     </>
   );

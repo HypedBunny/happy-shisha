@@ -6,8 +6,7 @@ const WhatsAppButton = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
 
-  // Replace with your actual WhatsApp number (format: country code + number, no spaces or symbols)
-  const whatsappNumber = '27123456789'; // Example: South African number
+  const whatsappNumber = '27810466658';
   const whatsappMessage = encodeURIComponent(
     'Hi! I\'m interested in booking your premium mobile shisha service.'
   );

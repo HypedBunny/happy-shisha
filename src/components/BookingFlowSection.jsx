@@ -27,7 +27,7 @@ const BookingFlowSection = () => {
   ];
 
   return (
-    <section className="relative min-h-screen w-full bg-charcoal py-32 px-6">
+    <section className="relative w-full bg-charcoal py-16 px-6">
       {/* Background Elements */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber/20 rounded-full blur-[150px]" />
@@ -45,7 +45,7 @@ const BookingFlowSection = () => {
         </motion.h2>
 
         <motion.p
-          className="text-center text-smoke text-lg md:text-xl mb-20 max-w-2xl mx-auto"
+          className="text-center text-smoke text-lg md:text-xl mb-12 max-w-2xl mx-auto"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}

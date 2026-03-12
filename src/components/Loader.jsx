@@ -74,7 +74,7 @@ const Loader = () => {
           transition={{ delay: 0.3, duration: 0.8 }}
         >
           <h2 className="text-3xl md:text-4xl font-light text-soft-white tracking-wider mb-2">
-            Happy Shisha
+            Happy Events Presents Happy Shisha
           </h2>
           <motion.p
             className="text-smoke text-sm tracking-widest"

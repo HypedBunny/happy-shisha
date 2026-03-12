@@ -6,6 +6,7 @@ import MinimalShishaPipe from './MinimalShishaPipe';
 const ContactSection = () => {
   const [formData, setFormData] = useState({
     name: '',
+    email: '',
     phone: '',
     eventType: '',
     date: '',
@@ -35,38 +36,62 @@ const ContactSection = () => {
   const validate = () => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+      newErrors.email = 'Valid email is required';
+    }
     if (!formData.phone.trim()) newErrors.phone = 'Phone is required';
     if (!formData.eventType) newErrors.eventType = 'Event type is required';
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validate();
 
     if (Object.keys(newErrors).length === 0) {
-      // Here you would typically send the data to your backend
-      console.log('Form submitted:', formData);
-      setSubmitted(true);
-
-      // Reset form after 3 seconds
-      setTimeout(() => {
-        setSubmitted(false);
-        setFormData({
-          name: '',
-          phone: '',
-          eventType: '',
-          date: '',
-          message: '',
+      try {
+        const response = await fetch('http://localhost:3001/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
         });
-      }, 3000);
+
+        const data = await response.json();
+
+        if (data.success) {
+          setSubmitted(true);
+
+          // Reset form after 3 seconds
+          setTimeout(() => {
+            setSubmitted(false);
+            setFormData({
+              name: '',
+              email: '',
+              phone: '',
+              eventType: '',
+              date: '',
+              message: '',
+            });
+          }, 3000);
+        } else {
+          console.error('Failed to send message:', data.message);
+          alert('Failed to send message. Please try again later.');
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('An error occurred. Please try again later.');
+      }
     } else {
       setErrors(newErrors);
     }
   };
 
   return (
-    <section id="contact" className="relative min-h-screen w-full bg-gradient-to-b from-charcoal to-black py-32 px-6">
+    <section id="contact" className="relative w-full bg-gradient-to-b from-charcoal to-black py-12 px-6">
       {/* Glow Background */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-amber/30 rounded-full blur-[200px]" />
@@ -115,13 +140,32 @@ const ContactSection = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 bg-charcoal/50 border ${
-                      errors.name ? 'border-red-500' : 'border-smoke/30'
-                    } rounded-lg text-soft-white focus:border-amber focus:outline-none transition-colors`}
+                    className={`w-full px-4 py-3 bg-charcoal/50 border ${errors.name ? 'border-red-500' : 'border-smoke/30'
+                      } rounded-lg text-soft-white focus:border-amber focus:outline-none transition-colors`}
                     placeholder="Your name"
                   />
                   {errors.name && (
                     <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                  )}
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label htmlFor="email" className="block text-soft-white text-sm font-light mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 bg-charcoal/50 border ${errors.email ? 'border-red-500' : 'border-smoke/30'
+                      } rounded-lg text-soft-white focus:border-amber focus:outline-none transition-colors`}
+                    placeholder="you@example.com"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-xs mt-1">{errors.email}</p>
                   )}
                 </div>
 
@@ -136,9 +180,8 @@ const ContactSection = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 bg-charcoal/50 border ${
-                      errors.phone ? 'border-red-500' : 'border-smoke/30'
-                    } rounded-lg text-soft-white focus:border-amber focus:outline-none transition-colors`}
+                    className={`w-full px-4 py-3 bg-charcoal/50 border ${errors.phone ? 'border-red-500' : 'border-smoke/30'
+                      } rounded-lg text-soft-white focus:border-amber focus:outline-none transition-colors`}
                     placeholder="+27 XX XXX XXXX"
                   />
                   {errors.phone && (
@@ -156,9 +199,8 @@ const ContactSection = () => {
                     name="eventType"
                     value={formData.eventType}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 bg-charcoal/50 border ${
-                      errors.eventType ? 'border-red-500' : 'border-smoke/30'
-                    } rounded-lg text-soft-white focus:border-amber focus:outline-none transition-colors`}
+                    className={`w-full px-4 py-3 bg-charcoal/50 border ${errors.eventType ? 'border-red-500' : 'border-smoke/30'
+                      } rounded-lg text-soft-white focus:border-amber focus:outline-none transition-colors`}
                   >
                     <option value="">Select event type</option>
                     {eventTypes.map((type) => (

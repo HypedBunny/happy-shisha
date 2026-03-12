@@ -3,8 +3,11 @@ import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import MinimalShishaPipe from './MinimalShishaPipe';
 
+import { useNavigate } from 'react-router-dom';
+
 const HeroSection = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -18,12 +21,12 @@ const HeroSection = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  const scrollToContact = () => {
-    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+  const handleBookNow = () => {
+    navigate('/book');
   };
 
   return (
-    <section className="relative h-screen w-full overflow-hidden flex items-center justify-center"
+    <section className="relative h-screen w-full overflow-hidden flex items-center justify-center mb-0"
       style={{
         background: 'radial-gradient(ellipse at center, rgba(30, 30, 30, 1) 0%, rgba(14, 14, 14, 1) 100%)',
       }}
@@ -46,26 +49,20 @@ const HeroSection = () => {
         transition={{ type: 'spring', stiffness: 50, damping: 20 }}
       >
         <motion.div
-          className="mb-8 flex justify-center"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, ease: 'easeOut' }}
-        >
-          <img
-            src="/logo.png"
-            alt="Happy Shisha Logo"
-            className="w-64 h-64 md:w-96 md:h-96 object-contain"
-          />
-        </motion.div>
-
-        <motion.h1
-          className="text-5xl md:text-7xl lg:text-8xl font-light tracking-wider text-soft-white mb-8"
+          className="mb-6 flex flex-col items-center justify-center text-center"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
+          transition={{ duration: 1.2, ease: 'easeOut', delay: 0.2 }}
         >
-          Happy Shisha
-        </motion.h1>
+          <span className="text-amber/90 text-3xl md:text-5xl lg:text-6xl block mb-2 lowercase italic font-serif tracking-wide drop-shadow-md">Happy Events</span>
+          <span className="text-lg md:text-xl block mb-8 text-smoke/70 tracking-[0.4em] uppercase">Presents</span>
+
+          <img
+            src="/logo.png"
+            alt="Happy Events Presents Happy Shisha Logo"
+            className="w-48 h-48 md:w-64 md:h-64 object-contain filter drop-shadow-2xl hover:scale-105 transition-transform duration-500 ease-out"
+          />
+        </motion.div>
 
         <motion.p
           className="text-xl md:text-3xl font-light text-smoke mb-12 tracking-wide"
@@ -77,7 +74,7 @@ const HeroSection = () => {
         </motion.p>
 
         <motion.button
-          onClick={scrollToContact}
+          onClick={handleBookNow}
           className="relative px-16 py-5 text-xl font-semibold text-charcoal bg-gradient-to-r from-amber via-amber/90 to-amber rounded-full overflow-hidden group shadow-2xl"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
