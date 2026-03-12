@@ -21,8 +21,8 @@ app.use(express.json());
 // Set up Nodemailer transporter using provided credentials
 const transporter = nodemailer.createTransport({
     host: 'www74.cpt1.host-h.net',
-    port: 587, // Using port 465 for true SSL (SMTPS)
-    secure: false,
+    port: 465, // Using port 465 for true SSL (SMTPS)
+    secure: true,
     auth: {
         user: 'jaylene@happyevents.co.za', // Authentication email
         pass: '1m5p07N34W3j30'
