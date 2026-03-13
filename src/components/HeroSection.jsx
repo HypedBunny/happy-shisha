@@ -1,26 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
-import MinimalShishaPipe from './MinimalShishaPipe';
 
 import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth - 0.5) * 20,
-        y: (e.clientY / window.innerHeight - 0.5) * 20,
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
   const handleBookNow = () => {
     navigate('/book');
   };
@@ -39,13 +24,9 @@ const HeroSection = () => {
         }}
       />
 
-      {/* Parallax Content */}
+      {/* Content */}
       <motion.div
         className="relative z-10 text-center px-6 max-w-6xl"
-        style={{
-          x: mousePosition.x,
-          y: mousePosition.y,
-        }}
         transition={{ type: 'spring', stiffness: 50, damping: 20 }}
       >
         <motion.div
@@ -60,6 +41,7 @@ const HeroSection = () => {
           <img
             src="/logo.png"
             alt="Happy Events Presents Happy Shisha Logo"
+            loading="eager"
             className="w-48 h-48 md:w-64 md:h-64 object-contain filter drop-shadow-2xl hover:scale-105 transition-transform duration-500 ease-out"
           />
         </motion.div>

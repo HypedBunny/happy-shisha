@@ -15,7 +15,7 @@ function App() {
     // Simulate loading time (adjust as needed)
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2500); // 2.5 seconds
+    }, 300); // reduced from 2500ms for better UX
 
     return () => clearTimeout(timer);
   }, []);

@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import ExperienceSection from '../components/ExperienceSection';
 import VibeSection from '../components/VibeSection';
 import TrustSection from '../components/TrustSection';
+import FlavorsMenu from '../components/FlavorsMenu';
+import FAQSection from '../components/FAQSection';
 
 const Info = () => {
     return (
@@ -19,7 +21,8 @@ const Info = () => {
                     <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-transparent to-black/60 z-10 pointer-events-none"></div>
                     <img
                         src="/sexy-brunette-girl-seductive-black-clothes-smokes-hookah-while-sitting-counter-nightclub.jpg"
-                        alt="Brunette girl smoking hookah in nightclub"
+                        alt="Brunette girl smoking shisha in nightclub"
+                        loading="lazy"
                         className="w-full h-full object-cover object-[center_20%] group-hover:scale-105 transition-transform duration-700 ease-in-out"
                     />
                 </motion.div>
@@ -39,7 +42,8 @@ const Info = () => {
                     <div className="absolute inset-0 bg-gradient-to-tl from-black/60 via-transparent to-black/60 z-10 pointer-events-none"></div>
                     <img
                         src="/young-people-vaping-from-hookah-bar.jpg"
-                        alt="Young people enjoying hookah bar atmosphere"
+                        alt="Young people enjoying shisha bar atmosphere"
+                        loading="lazy"
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-in-out"
                     />
                 </motion.div>
@@ -59,13 +63,16 @@ const Info = () => {
                     <div className="absolute inset-0 bg-gradient-to-tl from-black/60 via-transparent to-black/60 z-10 pointer-events-none"></div>
                     <img
                         src="/man-smoking-classic-shisha.jpg"
-                        alt="Man smoking classic shisha"
+                        alt="Man smoking classic shisha at our mobile shisha event"
+                        loading="lazy"
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-in-out"
                     />
                 </motion.div>
             </div>
 
             <TrustSection />
+            <FlavorsMenu />
+            <FAQSection />
         </div>
     );
 };
