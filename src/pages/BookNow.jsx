@@ -4,7 +4,7 @@ import ContactSection from '../components/ContactSection';
 
 const BookNow = () => {
     return (
-        <div className="pb-24 flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen bg-transparent">
             <ContactSection />
             <BookingFlowSection />
         </div>

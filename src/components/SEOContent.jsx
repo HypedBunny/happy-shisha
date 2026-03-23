@@ -1,9 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import BookingCTA from './BookingCTA';
 
 const SEOContent = () => {
   return (
-    <section className="relative w-full bg-charcoal py-24 px-6">
+    <section className="relative w-full bg-charcoal/60 py-24 px-6">
       {/* Subtle Background Elements for depth */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber/20 rounded-full blur-[100px]" />
@@ -108,7 +109,7 @@ const SEOContent = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-center pt-12"
+            className="text-center"
           >
             <p className="text-sm text-smoke/50 italic tracking-wide max-w-xl mx-auto">
               We maintain hospital-grade hygiene standards. Our service is intended for adult entertainment at private events.
@@ -116,6 +117,8 @@ const SEOContent = () => {
           </motion.div>
 
         </motion.div>
+
+        <BookingCTA label="Book for Your Event" />
       </div>
     </section>
   );

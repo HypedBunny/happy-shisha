@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find '/c/Users/beuke/Documents/SudoOps/Client Repos/Happy Shisha' -maxdepth 2 -not -path */node_modules/* -not -path */.git/* -type f -o -type d)"
+    ]
+  }
+}

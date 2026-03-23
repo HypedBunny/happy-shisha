@@ -1,7 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
-
 import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
@@ -11,20 +9,8 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative h-screen w-full overflow-hidden flex items-center justify-center mb-0"
-      style={{
-        background: 'radial-gradient(ellipse at center, rgba(30, 30, 30, 1) 0%, rgba(14, 14, 14, 1) 100%)',
-      }}
-    >
-      {/* Subtle texture overlay */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-        }}
-      />
-
-      {/* Content */}
+    <section className="relative h-screen w-full flex items-center justify-center mb-0">
+      {/* Content sits on the global smoke background */}
       <motion.div
         className="relative z-10 text-center px-6 max-w-6xl"
         transition={{ type: 'spring', stiffness: 50, damping: 20 }}
@@ -42,6 +28,7 @@ const HeroSection = () => {
             src="/logo.png"
             alt="Happy Events Presents Happy Shisha Logo"
             loading="eager"
+            fetchPriority="high"
             className="w-48 h-48 md:w-64 md:h-64 object-contain filter drop-shadow-2xl hover:scale-105 transition-transform duration-500 ease-out"
           />
         </motion.div>
@@ -67,14 +54,8 @@ const HeroSection = () => {
           {/* Animated gradient background */}
           <motion.div
             className="absolute inset-0 bg-gradient-to-r from-amber/80 via-yellow-500 to-amber/80"
-            animate={{
-              x: ['-100%', '100%'],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: 'linear',
-            }}
+            animate={{ x: ['-100%', '100%'] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
           />
 
           {/* Pulsing glow effect */}
@@ -104,15 +85,6 @@ const HeroSection = () => {
 
           <span className="relative z-10 tracking-wide drop-shadow-lg">BOOK NOW!</span>
         </motion.button>
-      </motion.div>
-
-      {/* Scroll Indicator */}
-      <motion.div
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <ChevronDown className="w-8 h-8 text-amber opacity-60" />
       </motion.div>
 
       {/* Ambient Glow */}

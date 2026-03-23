@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import BookingCTA from './BookingCTA';
 
 const ExperienceSection = () => {
   const phrases = [
@@ -11,7 +12,7 @@ const ExperienceSection = () => {
   ];
 
   return (
-    <section className="relative min-h-screen w-full bg-gradient-to-b from-charcoal to-black py-32 px-6">
+    <section className="relative w-full bg-gradient-to-b from-charcoal/65 to-black/55 py-24 px-6">
       {/* Background Smoke Effect */}
       <motion.div
         className="absolute inset-0 opacity-10"
@@ -39,6 +40,8 @@ const ExperienceSection = () => {
             <PhraseReveal key={index} phrase={phrase} delay={index * 0.3} />
           ))}
         </div>
+
+        <BookingCTA label="Book This Experience" />
       </div>
     </section>
   );

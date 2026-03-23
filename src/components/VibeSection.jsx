@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Sparkles, Flame, Moon } from 'lucide-react';
+import BookingCTA from './BookingCTA';
 
 const VibeSection = () => {
   const sectionRef = useRef(null);
@@ -34,7 +35,7 @@ const VibeSection = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen w-full bg-black py-32 px-6 overflow-hidden"
+      className="relative w-full bg-black/50 py-24 px-6 overflow-hidden"
     >
       {/* Parallax Background Elements */}
       <motion.div
@@ -62,6 +63,8 @@ const VibeSection = () => {
             <VibeCard key={index} {...card} index={index} />
           ))}
         </div>
+
+        <BookingCTA label="Set the Vibe — Book Now" />
       </div>
     </section>
   );

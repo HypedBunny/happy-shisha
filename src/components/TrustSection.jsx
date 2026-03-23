@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Award, Sparkles, Clock, MessageCircle } from 'lucide-react';
+import BookingCTA from './BookingCTA';
 
 const TrustSection = () => {
   const features = [
@@ -28,7 +29,7 @@ const TrustSection = () => {
   ];
 
   return (
-    <section className="relative min-h-screen w-full bg-gradient-to-b from-black to-charcoal py-32 px-6">
+    <section className="relative w-full bg-gradient-to-b from-black/55 to-charcoal/65 py-24 px-6">
       {/* Ambient Background */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-1/3 left-1/3 w-96 h-96 bg-amber/20 rounded-full blur-[150px]" />
@@ -63,12 +64,14 @@ const TrustSection = () => {
         </div>
 
         {/* Stats Counter */}
-        <div className="mt-32 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+        <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
           <StatCounter end={500} label="Events Served" suffix="+" />
           <StatCounter end={98} label="Satisfaction Rate" suffix="%" />
           <StatCounter end={10} label="Years Experience" suffix="+" />
           <StatCounter end={24} label="Hour Support" suffix="/7" />
         </div>
+
+        <BookingCTA label="Join 500+ Happy Events" />
       </div>
     </section>
   );

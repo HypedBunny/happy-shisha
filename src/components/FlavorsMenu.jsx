@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import BookingCTA from './BookingCTA';
 
 const flavorCategories = [
     {
@@ -26,7 +27,7 @@ const flavorCategories = [
 
 const FlavorsMenu = () => {
     return (
-        <section className="relative w-full bg-charcoal py-24 px-6 overflow-hidden">
+        <section className="relative w-full bg-charcoal/60 py-24 px-6 overflow-hidden">
             {/* Background Glow */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-4xl opacity-10 pointer-events-none">
                 <div className="absolute bg-amber border rounded-full w-[800px] h-[800px] blur-[150px] mix-blend-screen" />
@@ -80,6 +81,8 @@ const FlavorsMenu = () => {
                         </motion.div>
                     ))}
                 </div>
+
+                <BookingCTA label="Pick Your Flavors — Book Now" />
             </div>
         </section>
     );

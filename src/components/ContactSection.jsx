@@ -91,7 +91,7 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="contact" className="relative w-full bg-gradient-to-b from-charcoal to-black py-12 px-6">
+    <section id="contact" className="relative w-full bg-gradient-to-b from-charcoal/65 to-black/55 py-12 px-6">
       {/* Glow Background */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-amber/30 rounded-full blur-[200px]" />
