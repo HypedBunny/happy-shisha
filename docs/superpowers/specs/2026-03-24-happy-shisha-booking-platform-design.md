@@ -38,7 +38,6 @@ booking-platform/
 │       ├── packages/route.ts
 │       ├── availability/route.ts
 │       ├── book/route.ts
-│       ├── confirm/route.ts
 │       ├── contact/route.ts
 │       └── admin/
 │           ├── bookings/route.ts
@@ -61,8 +60,8 @@ booking-platform/
 
 | Attribute | Type | Notes |
 |---|---|---|
-| `bookingId` | String (PK) | UUID |
-| `createdAt` | String (SK) | ISO 8601 timestamp |
+| `bookingId` | String (PK) | UUID — sole key, no SK |
+| `createdAt` | String | ISO 8601 timestamp (regular attribute) |
 | `name` | String | Customer full name |
 | `email` | String | Customer email |
 | `phone` | String | Customer phone |
@@ -71,11 +70,13 @@ booking-platform/
 | `date` | String | YYYY-MM-DD |
 | `preferredTime` | String | e.g. "18:00" |
 | `notes` | String? | Optional |
-| `status` | String | `PENDING` \| `CONFIRMED` \| `PAID` |
+| `status` | String | `PENDING` \| `CONFIRMED` \| `PAID` \| `CANCELLED` |
 | `paymentLink` | String? | Yoco link, set on confirmation |
 | `calendarEventId` | String? | Google Calendar event ID |
 
 **GSI:** `status-createdAt-index` — for admin dashboard filtering by status.
+
+Single-item lookup uses `GetItem` with `bookingId` as the sole PK. `createdAt` is stored as a regular attribute, not part of the key.
 
 ### Table: `packages`
 
@@ -88,6 +89,7 @@ booking-platform/
 | `duration` | String | e.g. "4 hours" |
 | `includedItems` | List\<String\> | |
 | `active` | Boolean | Soft delete / hide from booking flow |
+| `displayOrder` | Number | Controls display order in customer UI and admin list |
 
 No users table — Cognito manages admin identity. No customer accounts.
 
@@ -96,13 +98,13 @@ No users table — Cognito manages admin identity. No customer accounts.
 ## 4. Customer Booking Flow
 
 ### Step 1 — Package Selection (`/`)
-- Grid of active packages fetched from `GET /api/packages`
+- Grid of active packages fetched from `GET /api/packages`, sorted by `displayOrder`
 - Each card: name, description, price, duration, included items
 - Clicking a package proceeds to booking
 
 ### Step 2 — Date & Time (`/book?package=xxx`)
 - Date picker; on selection calls `GET /api/availability?date=YYYY-MM-DD`
-- Unavailable dates (blocked in Google Calendar) are disabled
+- Unavailable dates (blocked in Google Calendar **or** with existing `PENDING`/`CONFIRMED` booking in DynamoDB) are disabled
 - Customer enters preferred start time
 
 ### Step 3 — Details Form (`/book?package=xxx&date=xxx`)
@@ -110,13 +112,14 @@ No users table — Cognito manages admin identity. No customer accounts.
 - Submit calls `POST /api/book`
 
 ### On submit (server-side)
-1. Validate all inputs
-2. Re-check availability server-side
-3. Write booking to DynamoDB with status `PENDING`
-4. Create tentative full-day Google Calendar event
-5. Send acknowledgement email to customer
-6. Send booking notification email to admin
-7. Redirect to `/confirmation?id=xxx`
+1. Validate all inputs (zod)
+2. Re-check availability server-side: query DynamoDB for existing `PENDING`/`CONFIRMED` bookings on the date **and** check Google Calendar (if Calendar is unreachable, fall back to DynamoDB check alone and proceed)
+3. If date is taken → return 409 with user-facing message: "Sorry, this date is no longer available."
+4. Write booking to DynamoDB with status `PENDING`
+5. Create tentative full-day Google Calendar event (if Calendar unreachable, log error, continue — event can be added manually)
+6. Send acknowledgement email to customer (fire-and-forget: booking proceeds regardless of email success; failures logged server-side)
+7. Send booking notification email to admin (fire-and-forget)
+8. Redirect to `/confirmation?id=xxx`
 
 ### Step 4 — Confirmation Page (`/confirmation?id=xxx`)
 - "Booking request received" with booking summary
@@ -128,15 +131,15 @@ No users table — Cognito manages admin identity. No customer accounts.
 
 ### Auth
 - Cognito User Pool (email/password, admin users only)
-- Next.js middleware protects all `/admin/*` routes
+- Next.js middleware protects all `/admin/*` routes — Cognito JWT validated on every request
 - Unauthenticated requests redirect to Cognito hosted UI
 
 ### Pages
 
 **`/admin`** — Booking list
 - All bookings sorted by date, newest first
-- Filter tabs: All / Pending / Confirmed / Paid
-- Status badges: `PENDING` (amber), `CONFIRMED` (blue), `PAID` (green)
+- Filter tabs: All / Pending / Confirmed / Paid / Cancelled
+- Status badges: `PENDING` (amber), `CONFIRMED` (blue), `PAID` (green), `CANCELLED` (grey)
 - Columns: customer name, package, date, preferred time, status, actions
 
 **`/admin/bookings/[id]`** — Booking detail
@@ -144,19 +147,27 @@ No users table — Cognito manages admin identity. No customer accounts.
 - Actions by status:
   - `PENDING` → "Confirm Booking" (modal to paste Yoco link)
   - `CONFIRMED` → "Mark as Paid"
-  - Any → "Cancel Booking"
+  - `PENDING` or `CONFIRMED` → "Cancel Booking"
 
 **Confirm flow:**
 1. Staff clicks "Confirm Booking"
 2. Modal: paste Yoco payment link
-3. Submit → `POST /api/confirm`
+3. Submit → `PUT /api/admin/bookings/[id]` with `{ status: "CONFIRMED", paymentLink: "..." }`
 4. DynamoDB status → `CONFIRMED`, payment link stored
-5. Confirmation + payment link email sent to customer
-6. Google Calendar event updated (tentative → confirmed)
+5. Confirmation + payment link email sent to customer (fire-and-forget)
+6. Google Calendar event title updated to reflect confirmed status
+
+**Cancel flow:**
+1. Staff clicks "Cancel Booking"
+2. Confirmation prompt: "Are you sure?"
+3. Submit → `PUT /api/admin/bookings/[id]` with `{ status: "CANCELLED" }`
+4. DynamoDB status → `CANCELLED`
+5. Google Calendar event deleted (if `calendarEventId` exists; if Calendar unreachable, log error)
+6. Cancellation email sent to customer (fire-and-forget, only if status was `CONFIRMED`)
 
 **`/admin/packages`** — Package management
-- List all packages (including inactive)
-- Create / edit / toggle active
+- List all packages sorted by `displayOrder` (including inactive)
+- Create / edit / toggle active / reorder (`displayOrder`)
 
 ---
 
@@ -164,22 +175,23 @@ No users table — Cognito manages admin identity. No customer accounts.
 
 | Route | Method | Auth | Purpose |
 |---|---|---|---|
-| `/api/packages` | GET | Public | List active packages |
-| `/api/availability` | GET | Public | Check Google Calendar for a date |
+| `/api/packages` | GET | Public | List active packages, sorted by `displayOrder` |
+| `/api/availability` | GET | Public | Check availability for a date (Calendar + DynamoDB) |
 | `/api/book` | POST | Public | Create booking, send emails, block calendar |
-| `/api/confirm` | POST | Cognito | Confirm booking, send payment email |
 | `/api/contact` | POST | Public | Contact form (migrated from existing Lambda) |
 | `/api/admin/packages` | GET/POST/PUT | Cognito | Package CRUD |
 | `/api/admin/bookings` | GET | Cognito | List all bookings |
-| `/api/admin/bookings/[id]` | PUT | Cognito | Update booking status |
+| `/api/admin/bookings/[id]` | PUT | Cognito | Update booking status (confirm, mark paid, cancel) |
 
-**Rate limiting:** `/api/book` and `/api/contact` — simple in-memory rate limiter or Amplify WAF rule.
+All status transitions (confirm, mark paid, cancel) go through `PUT /api/admin/bookings/[id]`. No separate `/api/confirm` route — the `PUT` endpoint handles all booking state changes with the appropriate side-effects (email, calendar update) based on the target status in the request body.
+
+**Rate limiting:** `/api/book` and `/api/contact` rate-limited via AWS WAF rule on the Amplify app (WAF WebACL attached to the Amplify distribution). Rate limit: 20 requests per IP per 5-minute window. Violations return HTTP 429. WAF resource managed in OpenTofu.
 
 ---
 
 ## 7. Email (Nodemailer / SMTP)
 
-Replaces the existing AWS Lambda contact handler. All email sent inline from Next.js API routes.
+Replaces the existing AWS Lambda contact handler. All email sent inline from Next.js API routes. All email sends are **fire-and-forget**: the booking/confirm action completes regardless of email delivery success. SMTP failures are logged server-side (Amplify CloudWatch logs).
 
 **SMTP credentials (from SSM Parameter Store):**
 - Host: `www74.cpt1.host-h.net`
@@ -191,8 +203,10 @@ Replaces the existing AWS Lambda contact handler. All email sent inline from Nex
 
 | Trigger | Recipients | Content |
 |---|---|---|
-| Booking submitted | Customer + admin | Booking details, status: pending |
-| Booking confirmed | Customer | Confirmation + Yoco payment link |
+| Booking submitted | Customer | Acknowledgement, booking details, pending status |
+| Booking submitted | Admin | Full booking details |
+| Booking confirmed | Customer | Confirmation message + Yoco payment link |
+| Booking cancelled | Customer | Cancellation notice (only if booking was `CONFIRMED`) |
 | Contact form submitted | Admin | Enquiry details |
 | Contact form submitted | Customer | Auto-responder (preserved from Lambda) |
 
@@ -204,13 +218,21 @@ Email templates use HTML with the Happy Shisha logo (inline CID attachment), mat
 
 - **New dedicated calendar** created for bookings (calendar ID stored in SSM)
 - **Service account** credentials stored in SSM Parameter Store as JSON
-- **Full-day events** — each confirmed booking blocks the entire day
+- **Full-day events** — each booking blocks the entire day
 
 ### Logic
-- `GET /api/availability?date=YYYY-MM-DD` — checks for any full-day events on that date
-- `POST /api/book` — creates tentative full-day event on booking submission
-- `POST /api/confirm` — updates event to confirmed status (title updated)
-- Overlap check prevents double-bookings server-side
+
+| Action | Calendar operation |
+|---|---|
+| `GET /api/availability?date=` | Check for full-day events on date |
+| `POST /api/book` | Create tentative full-day event |
+| Booking confirmed | Update event title to include `[CONFIRMED]` |
+| Booking cancelled | Delete event by `calendarEventId` |
+
+### Fallback behaviour
+
+- **Availability check**: If Google Calendar is unreachable, fall back to DynamoDB-only check (dates with `PENDING`/`CONFIRMED` bookings are blocked). Customer sees no error; the check degrades gracefully.
+- **Calendar write (book/confirm/cancel)**: If Google Calendar is unreachable, log the error and continue — the booking state in DynamoDB is the source of truth. Staff can manually update the calendar.
 
 ---
 
@@ -222,8 +244,8 @@ Email templates use HTML with the Happy Shisha logo (inline CID attachment), mat
 
 ```hcl
 # DynamoDB
-aws_dynamodb_table.bookings          # + GSI: status-createdAt
-aws_dynamodb_table.packages
+aws_dynamodb_table.bookings          # PK: bookingId. GSI: status-createdAt
+aws_dynamodb_table.packages          # PK: packageId
 
 # Cognito
 aws_cognito_user_pool.admin
@@ -235,11 +257,16 @@ aws_ssm_parameter.smtp_port
 aws_ssm_parameter.smtp_user
 aws_ssm_parameter.smtp_pass          # migrated from variables.tf (was plaintext)
 aws_ssm_parameter.google_credentials # JSON service account key
+aws_ssm_parameter.google_calendar_id # Calendar ID
 
 # Amplify
 aws_amplify_app.booking
 aws_amplify_branch.main
 aws_amplify_domain_association.booking  # booking.happyshisha.co.za
+
+# WAF
+aws_wafv2_web_acl.booking            # Rate limiting for /api/book, /api/contact
+aws_wafv2_web_acl_association.amplify
 
 # IAM
 aws_iam_role.amplify_ssr             # DynamoDB read/write + SSM read
@@ -255,16 +282,22 @@ The existing Lambda + API Gateway (`infra/`) remains in place until the new plat
 
 ## 10. Security
 
-- Admin routes protected by Cognito JWT validation in Next.js middleware
+- Admin routes protected by Cognito JWT validation in Next.js middleware (`middleware.ts` at app root)
 - All API inputs validated server-side (zod)
 - SMTP password migrated from plaintext `variables.tf` to SSM SecureString
 - Google Calendar service account scoped to calendar read/write only
-- Rate limiting on public booking and contact endpoints
-- CORS restricted to `booking.happyshisha.co.za`
+- Rate limiting on public booking and contact endpoints via AWS WAF (managed in Tofu)
+- CORS: public API routes (`/api/book`, `/api/availability`, `/api/packages`, `/api/contact`) set `Access-Control-Allow-Origin: https://booking.happyshisha.co.za` via a shared Next.js middleware helper. Admin API routes (`/api/admin/*`) require same-origin requests only (no CORS header needed — admin UI is on the same origin).
 
 ---
 
-## 11. Branding
+## 11. Local Development
+
+Secrets are loaded from a `.env.local` file (git-ignored) during local development. SSM Parameter Store is only used in the Amplify deployed environment. The `.env.local` file mirrors the SSM parameter names as environment variables.
+
+---
+
+## 12. Branding
 
 - Matches Happy Shisha color palette (charcoal, amber, smoke, soft-white) from existing `tailwind.config.js`
 - Premium / luxury feel
@@ -273,7 +306,7 @@ The existing Lambda + API Gateway (`infra/`) remains in place until the new plat
 
 ---
 
-## 12. Out of Scope (Phase 1)
+## 13. Out of Scope (Phase 1)
 
 - Automated Yoco payment verification
 - SMS / WhatsApp notifications
@@ -284,8 +317,16 @@ The existing Lambda + API Gateway (`infra/`) remains in place until the new plat
 
 ---
 
-## 13. Migration
+## 14. Migration
 
-- Existing AWS Lambda (`happy-shisha-contact`) decommissioned after new `/api/contact` route is live and verified
-- SMTP credentials migrated to SSM Parameter Store (no longer in `variables.tf`)
-- New Tofu module independent of existing infra module
+### Plan
+1. Deploy new booking platform to `booking.happyshisha.co.za`
+2. Verify `/api/contact` by submitting a test contact form and confirming email receipt at `jaylene@happyevents.co.za`
+3. Monitor Amplify CloudWatch logs for 48 hours — zero SMTP errors
+4. Decommission existing Lambda via `tofu destroy -target aws_lambda_function.contact -target aws_apigatewayv2_api.api` in the `infra/` module
+5. SMTP credentials removed from `infra/variables.tf`
+
+### Acceptance criteria before decommission
+- At least one successful contact form submission confirmed via email receipt
+- No errors in Amplify CloudWatch logs over a 48-hour window
+- Admin dashboard shows bookings correctly in DynamoDB
