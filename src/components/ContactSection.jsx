@@ -52,7 +52,7 @@ const ContactSection = () => {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const response = await fetch('https://xilyz6iavckduz6nusqos6f3fq0pylwg.lambda-url.eu-west-1.on.aws/', {
+        const response = await fetch('https://51kzk0zhef.execute-api.eu-west-1.amazonaws.com/api/contact', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
