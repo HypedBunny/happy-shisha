@@ -22,3 +22,13 @@ dist-ssr
 *.sln
 *.sw?
 /node_modules
+
+# Infra
+/infra/lambda/node_modules
+/infra/lambda.zip
+/infra/.terraform/
+/infra/.terraform.lock.hcl
+/infra/terraform.tfstate
+/infra/terraform.tfstate.backup
+/infra/.terraform.tfstate.lock.info
+

@@ -1,0 +1,9 @@
+{
+  "name": "happy-shisha-contact-lambda",
+  "version": "1.0.0",
+  "description": "Lambda handler for Happy Shisha contact form",
+  "main": "index.js",
+  "dependencies": {
+    "nodemailer": "^6.9.9"
+  }
+}

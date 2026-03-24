@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enquiry Confirmation</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #f7f7f7;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #242424;
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(227, 139, 41, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .header {
+            margin-bottom: 30px;
+        }
+        .logo {
+            max-width: 150px;
+            height: auto;
+        }
+        h1 {
+            color: #E38B29;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #d1d5db;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(227, 139, 41, 0.5), transparent);
+            margin: 30px 0;
+        }
+        .footer {
+            font-size: 12px;
+            color: rgba(209, 213, 219, 0.5);
+        }
+        .accent {
+            color: #E38B29;
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- Using Embedded CID for Logo -->
+            <img class="logo" src="cid:happyshishalogo" alt="Happy Events Presents Happy Shisha">
+        </div>
+        
+        <h1>We've Received Your Enquiry!</h1>
+        
+        <p>Hi <span class="accent">{{name}}</span>,</p>
+        
+        <p>Thank you so much for reaching out to us. We have successfully received your booking enquiry for your upcoming <span class="accent">{{eventType}}</span>.</p>
+        
+        <p>Our team is reviewing the details of your event, and we will be in touch with you very soon—usually within 24 hours—to discuss custom packages and availability.</p>
+        
+        <div class="divider"></div>
+        
+        <p>If you have any urgent questions, feel free to reply directly to this email or reach out to us on WhatsApp!</p>
+        
+        <p>Best regards,<br><span class="accent">The Happy Shisha Team</span></p>
+        
+        <div class="footer">
+            <p>&copy; Happy Events Presents Happy Shisha. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
