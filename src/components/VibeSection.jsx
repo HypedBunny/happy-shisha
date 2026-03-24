@@ -1,19 +1,9 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { Sparkles, Flame, Moon } from 'lucide-react';
 import BookingCTA from './BookingCTA';
 
 const VibeSection = () => {
-  const sectionRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start end', 'end start'],
-  });
-
-  const y1 = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const y2 = useTransform(scrollYProgress, [0, 1], [-100, 100]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.3, 1, 0.3]);
-
   const vibeCards = [
     {
       icon: Flame,
@@ -33,19 +23,10 @@ const VibeSection = () => {
   ];
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative w-full bg-black/50 py-24 px-6 overflow-hidden"
-    >
-      {/* Parallax Background Elements */}
-      <motion.div
-        style={{ y: y1, opacity }}
-        className="absolute top-20 right-10 w-72 h-72 bg-amber/10 rounded-full blur-[100px]"
-      />
-      <motion.div
-        style={{ y: y2, opacity }}
-        className="absolute bottom-20 left-10 w-96 h-96 bg-smoke/10 rounded-full blur-[120px]"
-      />
+    <section className="relative w-full bg-black/50 py-24 px-6 overflow-hidden">
+      {/* Static Background Elements */}
+      <div className="absolute top-20 right-10 w-72 h-72 bg-amber/10 rounded-full blur-[100px]" />
+      <div className="absolute bottom-20 left-10 w-96 h-96 bg-smoke/10 rounded-full blur-[120px]" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
         <motion.h2

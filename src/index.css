@@ -35,6 +35,15 @@ body > #root {
   z-index: 2;
 }
 
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(227, 139, 41, 0.5); }
+  50%       { box-shadow: 0 0 60px rgba(227, 139, 41, 1); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
 @layer utilities {
   .text-shadow-glow {
     text-shadow: 0 0 20px rgba(227, 139, 41, 0.5);

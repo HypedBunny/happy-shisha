@@ -59,19 +59,7 @@ const HeroSection = () => {
           />
 
           {/* Pulsing glow effect */}
-          <motion.div
-            className="absolute inset-0"
-            animate={{
-              boxShadow: [
-                '0 0 20px rgba(227, 139, 41, 0.5)',
-                '0 0 40px rgba(227, 139, 41, 0.8)',
-                '0 0 60px rgba(227, 139, 41, 1)',
-                '0 0 40px rgba(227, 139, 41, 0.8)',
-                '0 0 20px rgba(227, 139, 41, 0.5)',
-              ],
-            }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
+          <div className="absolute inset-0 animate-pulse-glow rounded-full" />
 
           {/* Shimmer effect on hover */}
           <motion.div
