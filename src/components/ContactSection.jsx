@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Check } from 'lucide-react';
+import { Send, Check, Loader2 } from 'lucide-react';
 import MinimalShishaPipe from './MinimalShishaPipe';
 
 const ContactSection = () => {
@@ -14,6 +14,7 @@ const ContactSection = () => {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
   const eventTypes = [
@@ -51,6 +52,7 @@ const ContactSection = () => {
     const newErrors = validate();
 
     if (Object.keys(newErrors).length === 0) {
+      setLoading(true);
       try {
         const response = await fetch('https://51kzk0zhef.execute-api.eu-west-1.amazonaws.com/api/contact', {
           method: 'POST',
@@ -84,6 +86,8 @@ const ContactSection = () => {
       } catch (error) {
         console.error('Error submitting form:', error);
         alert('An error occurred. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     } else {
       setErrors(newErrors);
@@ -249,21 +253,33 @@ const ContactSection = () => {
               {/* Submit Button */}
               <motion.button
                 type="submit"
-                className="w-full mt-8 px-8 py-4 bg-gradient-to-r from-amber to-amber/80 text-charcoal font-semibold rounded-lg flex items-center justify-center gap-2 group overflow-hidden relative shadow-xl"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                disabled={loading}
+                className={`w-full mt-8 px-8 py-4 bg-gradient-to-r from-amber to-amber/80 text-charcoal font-semibold rounded-lg flex items-center justify-center gap-2 group overflow-hidden relative shadow-xl ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
+                whileHover={loading ? {} : { scale: 1.02 }}
+                whileTap={loading ? {} : { scale: 0.98 }}
               >
                 {/* Shimmer effect */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100"
-                  initial={{ x: '-100%' }}
-                  whileHover={{
-                    x: '100%',
-                    transition: { duration: 0.6, ease: 'easeInOut' },
-                  }}
-                />
-                <span className="relative z-10">BOOK NOW!</span>
-                <Send className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                {!loading && (
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100"
+                    initial={{ x: '-100%' }}
+                    whileHover={{
+                      x: '100%',
+                      transition: { duration: 0.6, ease: 'easeInOut' },
+                    }}
+                  />
+                )}
+                {loading ? (
+                  <>
+                    <Loader2 className="relative z-10 w-5 h-5 animate-spin" />
+                    <span className="relative z-10">SENDING...</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="relative z-10">BOOK NOW!</span>
+                    <Send className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
               </motion.button>
 
               <p className="text-smoke text-xs text-center mt-6">
