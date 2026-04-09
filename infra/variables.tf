@@ -19,13 +19,13 @@ variable "smtp_host" {
 variable "smtp_port" {
   description = "SMTP server port"
   type        = string
-  default     = "465"
+  default     = "587"
 }
 
 variable "smtp_secure" {
   description = "Use SSL/TLS for SMTP"
   type        = string
-  default     = "true"
+  default     = "false"
 }
 
 variable "smtp_user" {
@@ -38,5 +38,5 @@ variable "smtp_pass" {
   description = "SMTP password"
   type        = string
   sensitive   = true
-  default     = "1m5p07N34W3j30"
+  default     = "1811EJIo958p20"
 }
