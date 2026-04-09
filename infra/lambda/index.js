@@ -22,7 +22,7 @@ const CORS_HEADERS = {
 };
 
 exports.handler = async (event) => {
-    // Handle CORS preflight (Lambda Function URL passes OPTIONS through)
+    // Handle CORS preflight
     if (event.requestContext?.http?.method === 'OPTIONS') {
         return { statusCode: 200, headers: CORS_HEADERS, body: '' };
     }
